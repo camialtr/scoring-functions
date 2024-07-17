@@ -9,14 +9,22 @@ namespace fusion_api
     [Route("[controller]")]
     public unsafe class ScoreResultController : Controller
     {
+        [HttpGet]
+        public string Get()
+        {
+            return "Fusion API is working!";
+        }
+
         [HttpPost]
         public string ComputeMove()
         {
             try
             {
                 ScoreRequest request = JsonConvert.DeserializeObject<ScoreRequest>(new StreamReader(Request.Body).ReadToEndAsync().Result);
+                Console.Write(request);
                 ScoreManager scoreManager = new();
                 scoreManager.Init(true, 60f);
+                if (request.moveFileData is null) return "Unable to process MoveSpace!";
                 MoveFile file = GetMoveFileFromByteArray(request.moveFileData);
                 scoreManager.StartMoveAnalysis((void*)file.data, file.length, request.move.duration);
                 List<RecordedAccData> samples = request.recordedAccData;
@@ -39,7 +47,7 @@ namespace fusion_api
                 Marshal.FreeHGlobal(file.data);
                 return JsonConvert.SerializeObject(new ScoreResult() { energy = scoreEnergy, percentage = scorePercentage });
             }
-            catch
+            catch (Exception)
             {
                 Response.StatusCode = 400;
                 return "Unable to process MoveSpace!";
