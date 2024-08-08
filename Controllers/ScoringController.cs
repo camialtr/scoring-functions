@@ -7,13 +7,10 @@ namespace fusion_api
 {
     [ApiController]
     [Route("[controller]")]
-    public unsafe class ScoreResultController : Controller
+    public unsafe class ScoringController : Controller
     {
         [HttpGet]
-        public string Get()
-        {
-            return "Fusion API is working!";
-        }
+        public string Get() => "Scoring API is working!";
 
         [HttpPost]
         public string ComputeMove()
@@ -45,7 +42,7 @@ namespace fusion_api
                 float scoreEnergy = scoreManager.GetLastMoveEnergyAmount();
                 float scorePercentage = scoreManager.GetLastMovePercentageScore();
                 Marshal.FreeHGlobal(file.data);
-                return JsonConvert.SerializeObject(new ScoreResult() { energy = scoreEnergy, percentage = scorePercentage });
+                return JsonConvert.SerializeObject(new Scoring() { energy = scoreEnergy, percentage = scorePercentage });
             }
             catch (Exception)
             {
